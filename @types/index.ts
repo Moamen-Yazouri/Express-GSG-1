@@ -40,7 +40,7 @@ export enum EHttpStatus {
 
 export type BodyObject = Record<string, unknown>;
 
-export type TJwtPayload = Pick<IUser, "email" | "password"> &  { sub: string };  
+export type TJwtPayload = Pick<IUser, "email" | "name"> &  { sub: string };  
 
 interface IEnv {
   PORT: number,
