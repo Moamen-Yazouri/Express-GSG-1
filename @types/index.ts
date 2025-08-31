@@ -1,4 +1,4 @@
-import { IUser } from "../Module/user/user.entity";
+import { IUser } from "@/Module/user/user.entity";
 
 enum EModules {
     AUTH = 'auth',
@@ -40,7 +40,7 @@ export enum EHttpStatus {
 
 export type BodyObject = Record<string, unknown>;
 
-export type TJwtPayload = Pick<IUser, "email" | "name"> &  { sub: string };  
+export type TJwtPayload = Pick<IUser, "email" | "name" | "role"> & { sub: string };  
 
 interface IEnv {
   PORT: number,

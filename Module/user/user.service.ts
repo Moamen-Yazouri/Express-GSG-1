@@ -1,4 +1,4 @@
-import { IBaseMetadata } from "../../common/repos/types";
+import { IBaseMetadata } from "@/common/repos/types";
 import { IUser } from "./user.entity";
 import userRepo from "./user.repo";
 
@@ -17,6 +17,10 @@ class UserService {
 
     createUser(userData: Omit<IUser, keyof IBaseMetadata | "role">) {
         return userRepo.create({...userData, role: "student"});
+    }
+
+    createCoach(coachData: Omit<IUser, keyof IBaseMetadata | "role">) {
+        return userRepo.create({...coachData, role: "coach"});
     }
 
     updateUser(id: string, newData: Partial<IUser>) {

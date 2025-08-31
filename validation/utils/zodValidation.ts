@@ -1,6 +1,6 @@
 import { ZodError, ZodType } from "zod";
-import { EHttpStatus, TModule } from "../../@types";
-import CustomError from "../../Error/customError";
+import { EHttpStatus, TModule } from "@/@types";
+import CustomError from "@/Error/customError";
 
 export const zodValidation = <T>(schema: ZodType<T>, data: T, moduleName: TModule) => {
     try {
