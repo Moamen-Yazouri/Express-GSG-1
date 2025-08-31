@@ -1,5 +1,5 @@
-import type TModule from "module";
-import type { EHttpStatus } from "../@types/index";
+
+import type { EHttpStatus, TModule } from "../@types/index";
 
 class CustomError extends Error {
     moduleName: TModule;

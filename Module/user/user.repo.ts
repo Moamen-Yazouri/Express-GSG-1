@@ -9,7 +9,7 @@ class UserRepo extends BaseRepo<IUser> {
     }
 
     findByEmail(email: string) {
-        this.findBy("email", email);
+        return this.findBy("email", email);
     }
 }
 

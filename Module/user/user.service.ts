@@ -15,8 +15,8 @@ class UserService {
         return userRepo.findByEmail(email);
     }
 
-    createUser(userData: Omit<IUser, keyof IBaseMetadata>) {
-        return userRepo.create(userData);
+    createUser(userData: Omit<IUser, keyof IBaseMetadata | "role">) {
+        return userRepo.create({...userData, role: "student"});
     }
 
     updateUser(id: string, newData: Partial<IUser>) {
