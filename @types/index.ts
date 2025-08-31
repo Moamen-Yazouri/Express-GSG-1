@@ -3,8 +3,15 @@ enum EModules {
     USER = 'user',
     COURSE = 'course',
 }
+enum ERoles {
+  ADMIN = 'admin',
+  COACH = 'coach',
+  STUDENT = 'student'
+}
 
+export type TRoles = `${ERoles}`;
 export type TModule = `${EModules}`;  
+
 
 export enum EHttpStatus {
   
@@ -28,3 +35,5 @@ export enum EHttpStatus {
   ServiceUnavailable = 503,
   GatewayTimeout = 504,
 }
+
+export type BodyObject = Record<string, unknown>;
