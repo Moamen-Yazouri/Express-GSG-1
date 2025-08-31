@@ -1,13 +1,13 @@
 import {Request, Response} from "express";
-import { BodyObject, EHttpStatus } from "../../@types/index";
+import { EHttpStatus } from "@/@types/index";
 import userService from "./user.service";
 import { IUser } from "./user.entity";
-import { IBaseMetadata } from "../../common/repos/types";
+import { IBaseMetadata } from "@/common/repos/types";
 class UserController {
 
     getUsers(req: Request, res: Response) {
         const users = userService.getUsers();
-
+        
         res.status(EHttpStatus.OK).json(users);
     }
 

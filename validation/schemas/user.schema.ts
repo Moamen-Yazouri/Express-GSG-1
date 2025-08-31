@@ -1,6 +1,6 @@
 import * as z from "zod";
-import { IUser} from "../../Module/user/user.entity";
-import { ERoles } from "../../@types/index"
+import { IUser} from "@/Module/user/user.entity";
+import { ERoles } from "@/@types/index"
 export const userSchema = z.object({
     id: z.string(),
     name: z.string(),

@@ -1,7 +1,10 @@
 import { Router } from "express";
 import userController from "./user.controller";
+import { authenticationMiddleware } from "@/middlewares/authentication.middleware";
 
 const router = Router();
+
+router.use(authenticationMiddleware);
 
 router.get("/", userController.getUsers);
 
