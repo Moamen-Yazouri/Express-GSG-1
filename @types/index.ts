@@ -1,9 +1,11 @@
+import { IUser } from "../Module/user/user.entity";
+
 enum EModules {
     AUTH = 'auth',
     USER = 'user',
     COURSE = 'course',
 }
-enum ERoles {
+export enum ERoles {
   ADMIN = 'admin',
   COACH = 'coach',
   STUDENT = 'student'
@@ -37,3 +39,16 @@ export enum EHttpStatus {
 }
 
 export type BodyObject = Record<string, unknown>;
+
+export type TJwtPayload = Pick<IUser, "email" | "password"> &  { sub: string };  
+
+interface IEnv {
+  PORT: number,
+  JWT_SECRET: string,
+}
+
+declare global {
+  namespace NodeJS {
+    interface ProcessEnv extends IEnv {}
+  }
+}
