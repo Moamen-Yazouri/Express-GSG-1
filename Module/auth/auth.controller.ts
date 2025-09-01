@@ -1,6 +1,6 @@
 import { BodyObject, EHttpStatus } from "@/@types";
 import {Response, Request} from "express";
-import { TLoginDTO, TLoginResponseDTO, TSignUpDTO, TSignUpResponseDTO } from "./auth.dto";
+import { TLoginDTO, TLoginResponseDTO, TSignUpDTO, TSignUpResponseDTO } from "./types/auth.dto";
 import { zodValidation } from "@/validation/utils/zodValidation";
 import { signInSchema, signUpSchema } from "@/validation/schemas/auth.schema";
 import authService from "./auth.service";

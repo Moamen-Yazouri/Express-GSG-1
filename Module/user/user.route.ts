@@ -4,7 +4,7 @@ import { authenticationMiddleware } from "@/middlewares/authentication.middlewar
 
 const router = Router();
 
-router.use(authenticationMiddleware);
+// router.use(authenticationMiddleware);
 
 router.get("/", userController.getUsers);
 

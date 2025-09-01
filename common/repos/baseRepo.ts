@@ -23,14 +23,14 @@ export default class BaseRepo<T extends IBaseMetadata> implements IBaseRepo<T> {
     }
     create(data: Omit<T, keyof IBaseMetadata>) {
         const firstLettter = this.items[0]?.id.charAt(0) || 'i'
-        const newUser: T = {
+        const newItem: T = {
             ...data,
             id: String(firstLettter + ++this.idCounter),
             createdAt: new Date(),
             updatedAt: new Date(),
         } as unknown as T; 
-        this.items.push(newUser);
-        return newUser;
+        this.items.push(newItem);
+        return newItem;
     }
 
     delete(id: string) {
