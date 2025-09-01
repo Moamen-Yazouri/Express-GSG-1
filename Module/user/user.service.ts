@@ -3,7 +3,7 @@ import { IUser } from "./user.entity";
 import userRepo from "./user.repo";
 
 class UserService {
-    getUsers () {
+    getUsers() {
         return userRepo.findAll();
     }
 

@@ -1,4 +1,4 @@
-import {Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import { destructToken } from "./utils/destructToken";
 import { verifyToken } from "../utils/jwt.util";
 import { EHttpStatus } from "../@types";
@@ -30,9 +30,9 @@ export const authenticationMiddleware = (
     else {
         next(
           new CustomError(
-                  'user is not Authenticated',
-                  EHttpStatus.Unauthorized,
-                  'auth',
+            'user is not Authenticated',
+            EHttpStatus.Unauthorized,
+            'auth',
           )
         )
     }
