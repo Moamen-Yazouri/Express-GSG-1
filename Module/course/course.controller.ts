@@ -3,6 +3,7 @@ import courseService from "./course.service";
 import { BodyObject, EHttpStatus } from "@/@types";
 import { ICourse } from "./course.entity";
 import { IBaseMetadata } from "@/common/repos/types";
+import { deleteImage } from "@/utils/img.utils";
 
 class CourseController {
 
@@ -37,12 +38,63 @@ class CourseController {
 
     createCourse(req: Request<BodyObject, BodyObject, Omit<ICourse, keyof IBaseMetadata>>, res: Response) {
         const courseData = req.body;
+
         const image = req.file ? `/images/${req.file.filename}` : undefined;
-        console.log(courseData);
+
         const course = courseService.createCourse({...courseData, image});
+
         res
             .status(EHttpStatus.Created)
             .json(course);
+    }
+
+    updateCourse(req: Request<{id: string}, BodyObject, Omit<ICourse, keyof IBaseMetadata>>, res: Response) {
+        const id = req.params.id;
+
+        const courseData = req.body;
+
+        const image = req.file ? `/images/${req.file.filename}` : undefined;
+
+        const course = courseService.getCourse(id);
+
+        if(!course) {
+            return res  
+                        .status(EHttpStatus.NotFound)
+                        .json({message: "course not found"});
+        }
+
+        const updatedCourse = courseService.updateCourse(id, {...courseData, image});
+
+        if(image && course.image && updatedCourse) {
+            deleteImage(course.image);
+        }
+
+        res
+            .status(EHttpStatus.OK)
+            .json(updatedCourse);
+    }
+
+    deleteCourse(req: Request<{id: string}>, res: Response) {
+        const id = req.params.id;
+
+        const course = courseService.getCourse(id);
+
+        if(!course) {
+            return res  
+                        .status(EHttpStatus.NotFound)
+                        .json({message: "course not found"});
+        }
+
+        
+        courseService.deleteCourse(id);
+
+        if(course.image) {
+            deleteImage(course.image);
+        }
+
+        res
+            .status(EHttpStatus.OK)
+            .json({message: "course deleted"});
     }
 }
 

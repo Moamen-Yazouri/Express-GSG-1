@@ -4,7 +4,7 @@ import { verifyToken } from "../utils/jwt.util";
 import { EHttpStatus } from "../@types";
 import CustomError from "../Error/customError";
 
-export const authenticationMiddleware = (
+export const authMiddleware = (
     req: Request,
     res: Response,
     next: NextFunction
@@ -17,7 +17,12 @@ export const authenticationMiddleware = (
       
       try {
             const tokenPayload = verifyToken(token);
-            console.log(tokenPayload);
+
+            req.user = { 
+              id: tokenPayload.sub, 
+              role: tokenPayload.role 
+            };
+
             next()
       }
       catch(err: unknown) {
