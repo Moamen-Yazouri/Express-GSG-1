@@ -4,6 +4,7 @@ import { BodyObject, EHttpStatus } from "@/@types";
 import { ICourse } from "./course.entity";
 import { IBaseMetadata } from "@/common/repos/types";
 import { deleteImage } from "@/utils/img.utils";
+import path from "path";
 
 class CourseController {
 
@@ -48,9 +49,9 @@ class CourseController {
             .json(course);
     }
 
-    updateCourse(req: Request<{id: string}, BodyObject, Omit<ICourse, keyof IBaseMetadata>>, res: Response) {
+    async updateCourse(req: Request<{id: string}, BodyObject, Partial<ICourse>>, res: Response) {
         const id = req.params.id;
-
+        
         const courseData = req.body;
 
         const image = req.file ? `/images/${req.file.filename}` : undefined;
@@ -58,6 +59,14 @@ class CourseController {
         const course = courseService.getCourse(id);
 
         if(!course) {
+
+            if(req.file) {
+
+                const uploaded = req.file.filename;
+
+                await deleteImage(uploaded);
+            }
+
             return res  
                         .status(EHttpStatus.NotFound)
                         .json({message: "course not found"});
@@ -66,7 +75,8 @@ class CourseController {
         const updatedCourse = courseService.updateCourse(id, {...courseData, image});
 
         if(image && course.image && updatedCourse) {
-            deleteImage(course.image);
+            const imageName = path.basename(course.image);
+            await deleteImage(imageName);
         }
 
         res
@@ -74,7 +84,7 @@ class CourseController {
             .json(updatedCourse);
     }
 
-    deleteCourse(req: Request<{id: string}>, res: Response) {
+    async deleteCourse(req: Request<{id: string}>, res: Response) {
         const id = req.params.id;
 
         const course = courseService.getCourse(id);
@@ -89,7 +99,7 @@ class CourseController {
         courseService.deleteCourse(id);
 
         if(course.image) {
-            deleteImage(course.image);
+            await deleteImage(course.image);
         }
 
         res

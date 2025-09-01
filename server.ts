@@ -11,11 +11,19 @@ const app = express();
 app.use(express.json());
 
 app.use("/api/v1/auth", authRouter);
+
 app.use("/api/v1/users", userRouter);
+
 app.use('/api/v1/course', CourseRouter);
-app.listen(port);
+
+app.use((req: Request, res: Response) => {
+    const path = req.path
+    res.status(404).json({message: `route not found: ${path}`});
+})
 
 app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
     console.log(err)
     errorHandler(err, res);
 });
+
+app.listen(port);
