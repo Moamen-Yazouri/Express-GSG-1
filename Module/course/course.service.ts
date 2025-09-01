@@ -20,7 +20,7 @@ class CourseService {
         return courseRepo.delete(id);
     };
 
-    updateCourse(id: ICourse["id"], courseData: ICourse) {
+    updateCourse(id: ICourse["id"], courseData: Partial<ICourse>) {
         return courseRepo.update(id, courseData);
     };
 }
