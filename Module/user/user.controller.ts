@@ -1,5 +1,5 @@
 import {Request, Response} from "express";
-import { BodyObject, EHttpStatus } from "@/@types/index";
+import { BodyObject, EHttpStatus, StatusCodes } from "@/@types/index";
 import userService from "./user.service";
 import { IUser } from "./user.entity";
 import { IBaseMetadata } from "@/common/repos/types";
@@ -24,7 +24,12 @@ class UserController {
 
         if(!currentInfo) return res.status(EHttpStatus.NotFound).json({error: "User not found!"});
 
-        return res.status(EHttpStatus.OK).json(currentInfo);
+        return res.status(StatusCodes.HttpSuccess.OK).success({
+            success: true,
+            data: currentInfo,
+            statusCode: StatusCodes.HttpSuccess.OK,
+            message: "User info retrieved successfully",
+        });
     }
 
     getUser(req: Request<{id: string}>, res: Response) {

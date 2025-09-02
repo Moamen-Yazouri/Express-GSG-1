@@ -5,10 +5,13 @@ import {Request, Response} from "express";
 import { errorHandler } from "./Error/utils/errorHandler";
 import { authRouter } from "@/Module/auth/auth.route";
 import CourseRouter from "./Module/course/courses.route";
+import { responseUnifider } from "./middlewares/responseUnifider.middleware";
 const port = process.env.PORT;
 const app = express();
 
 app.use(express.json());
+
+app.use(responseUnifider);
 
 app.use("/api/v1/auth", authRouter);
 
