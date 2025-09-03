@@ -2,9 +2,11 @@ import { Request, Response } from "express";
 import courseService from "./course.service";
 import { BodyObject, StatusCodes } from "@/@types";
 import { ICourse } from "./course.entity";
-import { IBaseMetadata } from "@/common/repos/types";
 import { deleteImage } from "@/utils/img.utils";
 import path from "node:path";
+import { zodValidation } from "@/validation/utils/zodValidation";
+import { createCourseSchema, updateCourseSchema } from "@/validation/schemas/course.schema";
+import { CreatCourseDTO, UpdateCourseDTO } from "./types/course.dto";
 
 
 class CourseController {
@@ -60,15 +62,17 @@ class CourseController {
   }
 
   createCourse(
-    req: Request<BodyObject, BodyObject, Omit<ICourse, keyof IBaseMetadata>>,
+    req: Request<BodyObject, BodyObject, CreatCourseDTO>,
     res: Response
   ) {
 
     const courseData = req.body;
 
+    const validData = zodValidation(createCourseSchema, courseData, "course");
+
     const image = req.file ? `/images/${req.file.filename}` : undefined;
 
-    const course = courseService.createCourse({ ...courseData, image });
+    const course = courseService.createCourse({ ...validData, image });
 
     return res.success({
 
@@ -82,13 +86,15 @@ class CourseController {
   }
 
   async updateCourse(
-    req: Request<{ id: string }, BodyObject, Partial<ICourse>>,
+    req: Request<{ id: string }, BodyObject, UpdateCourseDTO>,
     res: Response
   ) {
 
     const id = req.params.id;
 
     const courseData = req.body;
+
+    const validData = zodValidation(updateCourseSchema, courseData, "course");
 
     const image = req.file ? `/images/${req.file.filename}` : undefined;
 
@@ -109,9 +115,10 @@ class CourseController {
         message: "Course not found",
 
       });
+
     }
 
-    const updatedCourse = courseService.updateCourse(id, { ...courseData, image });
+    const updatedCourse = courseService.updateCourse(id, {...validData as UpdateCourseDTO, image });
 
     
     if (image && existing.image && updatedCourse) {
@@ -153,9 +160,11 @@ class CourseController {
     courseService.deleteCourse(id);
 
     if (course.image) {
+
         const fileName = path.basename(course.image);
 
         await deleteImage(fileName);
+
     }
 
     return res.success({

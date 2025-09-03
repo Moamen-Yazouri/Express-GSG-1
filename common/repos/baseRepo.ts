@@ -3,7 +3,7 @@ import { IBaseMetadata, IBaseRepo } from "./types";
 export default class BaseRepo<T extends IBaseMetadata> implements IBaseRepo<T> {
     private items: T[];
     private idCounter: number;
-
+    
     constructor(items: T[]) {
         this.items = items;
         this.idCounter = items.length;
