@@ -1,111 +1,172 @@
-import {Request, Response} from "express";
+import { Request, Response } from "express";
 import courseService from "./course.service";
-import { BodyObject, EHttpStatus } from "@/@types";
+import { BodyObject, StatusCodes } from "@/@types";
 import { ICourse } from "./course.entity";
 import { IBaseMetadata } from "@/common/repos/types";
 import { deleteImage } from "@/utils/img.utils";
-import path from "path";
+import path from "node:path";
+
 
 class CourseController {
+  getCourses(req: Request, res: Response) {
 
-    getCourses(req: Request, res: Response) {
-        const courses = courseService.getCourses();
-        res
-            .status(EHttpStatus.OK)
-            .json(courses); 
+    const courses = courseService.getCourses();
+
+    return res.success({
+
+      success: true,
+      data: courses,
+      statusCode: StatusCodes.HttpSuccess.OK,
+      message: "Courses retrieved successfully",
+
+    });
+
+  }
+
+  getCourseById(req: Request<{ id: string }>, res: Response) {
+    const id = req.params.id;
+
+    if (!id) {
+      return res.error({
+
+        success: false,
+        statusCode: StatusCodes.HttpClientError.BadRequest,
+        message: "id is required",
+
+      });
     }
 
-    getCourseById(req: Request<{id: string}>, res: Response) {
-        const id = req.params.id;
+    const course = courseService.getCourse(id);
 
-        if(!id) {
-            res
-                .status(EHttpStatus.BadRequest)
-                .json({message: "id is required"});  
-        } 
+    if (!course) {
+      return res.error({
 
-        const course = courseService.getCourse(id);
+        success: false,
+        statusCode: StatusCodes.HttpClientError.NotFound,
+        message: "Course not found",
 
-        if(!course) {
-            res
-                .status(EHttpStatus.NotFound)
-                .json({message: "course not found"});
-        }
-
-        res
-            .status(EHttpStatus.OK)
-            .json(course);
+      });
     }
 
-    createCourse(req: Request<BodyObject, BodyObject, Omit<ICourse, keyof IBaseMetadata>>, res: Response) {
-        const courseData = req.body;
+    return res.success({
 
-        const image = req.file ? `/images/${req.file.filename}` : undefined;
+      success: true,
+      data: course,
+      statusCode: StatusCodes.HttpSuccess.OK,
+      message: "Course retrieved successfully",
 
-        const course = courseService.createCourse({...courseData, image});
+    });
 
-        res
-            .status(EHttpStatus.Created)
-            .json(course);
-    }
+  }
 
-    async updateCourse(req: Request<{id: string}, BodyObject, Partial<ICourse>>, res: Response) {
-        const id = req.params.id;
+  createCourse(
+    req: Request<BodyObject, BodyObject, Omit<ICourse, keyof IBaseMetadata>>,
+    res: Response
+  ) {
+
+    const courseData = req.body;
+
+    const image = req.file ? `/images/${req.file.filename}` : undefined;
+
+    const course = courseService.createCourse({ ...courseData, image });
+
+    return res.success({
+
+      success: true,
+      data: course,
+      statusCode: StatusCodes.HttpSuccess.Created,
+      message: "Course created successfully",
+
+    });
+
+  }
+
+  async updateCourse(
+    req: Request<{ id: string }, BodyObject, Partial<ICourse>>,
+    res: Response
+  ) {
+
+    const id = req.params.id;
+
+    const courseData = req.body;
+
+    const image = req.file ? `/images/${req.file.filename}` : undefined;
+
+    const existing = courseService.getCourse(id);
+
+    if (!existing) {
+      
+      if (req.file) {
         
-        const courseData = req.body;
-
-        const image = req.file ? `/images/${req.file.filename}` : undefined;
-
-        const course = courseService.getCourse(id);
-
-        if(!course) {
-
-            if(req.file) {
-
-                const uploaded = req.file.filename;
-
-                await deleteImage(uploaded);
-            }
-
-            return res  
-                        .status(EHttpStatus.NotFound)
-                        .json({message: "course not found"});
-        }
-
-        const updatedCourse = courseService.updateCourse(id, {...courseData, image});
-
-        if(image && course.image && updatedCourse) {
-            const imageName = path.basename(course.image);
-            await deleteImage(imageName);
-        }
-
-        res
-            .status(EHttpStatus.OK)
-            .json(updatedCourse);
-    }
-
-    async deleteCourse(req: Request<{id: string}>, res: Response) {
-        const id = req.params.id;
-
-        const course = courseService.getCourse(id);
-
-        if(!course) {
-            return res  
-                        .status(EHttpStatus.NotFound)
-                        .json({message: "course not found"});
-        }
-
+        await deleteImage(req.file.filename);
         
-        courseService.deleteCourse(id);
+      }
 
-        if(course.image) {
-            await deleteImage(course.image);
-        }
+      return res.error({
 
-        res
-            .status(EHttpStatus.OK)
-            .json({message: "course deleted"});
+        success: false,
+        statusCode: StatusCodes.HttpClientError.NotFound,
+        message: "Course not found",
+
+      });
     }
+
+    const updatedCourse = courseService.updateCourse(id, { ...courseData, image });
+
+    
+    if (image && existing.image && updatedCourse) {
+
+        const oldName = path.basename(existing.image);
+      
+        await deleteImage(oldName);
+      
+    }
+
+    return res.success({
+
+      success: true,
+      data: updatedCourse!,
+      statusCode: StatusCodes.HttpSuccess.OK,
+      message: "Course updated successfully",
+
+    });
+  }
+
+  async deleteCourse(req: Request<{ id: string }>, res: Response) {
+
+    const id = req.params.id;
+
+    const course = courseService.getCourse(id);
+
+    if (!course) {
+
+      return res.error({
+
+        success: false,
+        statusCode: StatusCodes.HttpClientError.NotFound,
+        message: "Course not found",
+
+      });
+
+    }
+
+    courseService.deleteCourse(id);
+
+    if (course.image) {
+        const fileName = path.basename(course.image);
+
+        await deleteImage(fileName);
+    }
+
+    return res.success({
+
+      success: true,
+      data: { id },
+      statusCode: StatusCodes.HttpSuccess.OK,
+      message: "Course deleted",
+
+    });
+  }
 }
 
 export default new CourseController();
