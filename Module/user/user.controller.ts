@@ -6,6 +6,9 @@ import { createArgon2Hash } from "@/utils/hash.util";
 import CustomError from "@/Error/customError";
 import userService from "../user/user.service";
 import { IUser } from "../user/user.entity";
+import { zodValidation } from "@/validation/utils/zodValidation";
+import { createSchema, updateSchema } from "@/validation/schemas/user.schema";
+import { CreateCoachDTO, UpdateDTO } from "./types/user.dto";
 
 class UserController {
   getUsers(req: Request, res: Response) {
@@ -79,35 +82,15 @@ class UserController {
     });
   }
 
-  async createCoach(req: Request, res: Response) {
-    const { name, email, password } = req.body as Partial<IUser>;
+  async createCoach(req: Request<BodyObject, BodyObject, CreateCoachDTO>, res: Response) {
+    const coachData = req.body;
 
-    if (!name || !email || !password) {
-
-      throw new CustomError(
-        "name, email and password are required",
-        StatusCodes.HttpClientError.BadRequest, 
-        "user"
-      );
-    }
-
-    const isExist = userService.getUserByEmail(email);
-
-    if(isExist) {
-
-        throw new CustomError(
-            "There is a coach with this email!",
-            StatusCodes.HttpClientError.BadRequest, 
-            "user"
-        );
-
-    }
-
-    const hashedPass = await createArgon2Hash(password);
+    const validData = zodValidation(createSchema, req.body, "user");
+    
+    const hashedPass = await createArgon2Hash(coachData.password);
 
     const newUser: Omit<IUser, keyof IBaseMetadata | "role"> = {
-      name,
-      email,
+      ...validData,
       password: hashedPass,
     };
 
@@ -120,7 +103,7 @@ class UserController {
       message: "Coach created successfully",
     });
 
-  }
+  };
 
   deleteUser(req: Request<{ id: string }>, res: Response) {
 
@@ -140,11 +123,13 @@ class UserController {
     const isDeleted = userService.deleteUser(id);
 
     if(!isDeleted) {
+
         throw new CustomError(
             "You are trying to delete a user that does not exist!",
             StatusCodes.HttpClientError.NotFound, 
             "user"
-          );
+        );
+        
     }
 
     return res.success({
@@ -158,7 +143,7 @@ class UserController {
 
   updateCurrentUser(
     
-    req: Request<BodyObject, BodyObject, Partial<IUser>>,
+    req: Request<BodyObject, BodyObject, UpdateDTO>,
 
     res: Response
 
@@ -174,9 +159,11 @@ class UserController {
       );
 
     }
-
     const newData = req.body;
-    const updatedUser = userService.updateUser(id, newData);
+
+    const validData = zodValidation(updateSchema, newData, "user");
+    
+    const updatedUser = userService.updateUser(id, validData);
 
     if (!updatedUser) {
 

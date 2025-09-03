@@ -10,3 +10,21 @@ export const userSchema = z.object({
     updatedAt: z.date(),
     password: z.string(),
 }) satisfies z.ZodType<IUser>
+
+export const createSchema = userSchema.omit(
+    {
+        id: true, 
+        createdAt: true, 
+        updatedAt: true
+    }
+);
+
+export const updateSchema = userSchema.omit(
+    {
+        id: true, 
+        createdAt: true, 
+        updatedAt: true, 
+        password: true
+    }
+    )
+    .partial();

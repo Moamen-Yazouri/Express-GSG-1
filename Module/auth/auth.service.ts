@@ -1,4 +1,4 @@
-import { EHttpStatus, TJwtPayload } from "@/@types";
+import { EHttpStatus, StatusCodes, TJwtPayload } from "@/@types";
 import CustomError from "@/Error/customError";
 import { createArgon2Hash, verifyArgon2Hash } from "@/utils/hash.util";
 import { generateToken } from "@/utils/jwt.util";
@@ -28,9 +28,9 @@ class AuthService {
         }
         catch(err: unknown) {
             if(err instanceof Error)
-                throw new CustomError(err.message, EHttpStatus.BadRequest, "auth");
+                throw new CustomError(err.message, StatusCodes.HttpClientError.BadRequest, "auth");
             else 
-                throw new CustomError("Internal server error", EHttpStatus.InternalServerError, "auth");
+                throw new CustomError("Internal server error", StatusCodes.HttpServerError.InternalServerError, "auth");
         }
 
     }
@@ -52,9 +52,9 @@ class AuthService {
         }
         catch(err: unknown) {
               if(err instanceof Error)
-                throw new CustomError(err.message, EHttpStatus.BadRequest, "auth",);
+                throw new CustomError(err.message, StatusCodes.HttpClientError.BadRequest, "auth",);
             else 
-                throw new CustomError("Internal server error", EHttpStatus.InternalServerError, "auth");
+                throw new CustomError("Internal server error", StatusCodes.HttpServerError.InternalServerError, "auth");
         }
     } 
 }
