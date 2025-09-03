@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { destructToken } from "./utils/destructToken";
 import { verifyToken } from "../utils/jwt.util";
-import { EHttpStatus } from "../@types";
+import { StatusCodes } from "../@types";
 import CustomError from "../Error/customError";
 
 export const authMiddleware = (
@@ -26,19 +26,21 @@ export const authMiddleware = (
             next()
       }
       catch(err: unknown) {
-            console.log("Wrong token!", err);
-            next();
-            return;
+          throw new CustomError(
+            'user is not authorized',
+            StatusCodes.HttpClientError.Unauthorized,
+            'auth',
+          )
       }
   
     }
     else {
-        next(
-          new CustomError(
-            'user is not Authenticated',
-            EHttpStatus.Unauthorized,
-            'auth',
-          )
-        )
+
+      throw new CustomError(
+        'user is not authorized',
+        StatusCodes.HttpClientError.Unauthorized,
+        'auth',
+      );
+      
     }
 }

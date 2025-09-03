@@ -34,8 +34,11 @@ export default class BaseRepo<T extends IBaseMetadata> implements IBaseRepo<T> {
     }
 
     delete(id: string) {
+        
         const allExcludeDeleted: T[] = this.items.filter((u) => (u.id !== id));
         this.items = allExcludeDeleted;
+
+        return true;
     }
 
     update(id: string, data: Partial<T>): T | undefined {

@@ -1,6 +1,8 @@
 import { IBaseMetadata } from "@/common/repos/types";
 import { IUser } from "./user.entity";
 import userRepo from "./user.repo";
+import CustomError from "@/Error/customError";
+import { StatusCodes } from "@/@types";
 
 class UserService {
     getUsers() {
@@ -16,10 +18,32 @@ class UserService {
     }
 
     createUser(userData: Omit<IUser, keyof IBaseMetadata | "role">) {
+        const isExist = this.getUserByEmail(userData.email);
+
+        if(isExist) {
+
+        throw new CustomError(
+            'User already exist!',
+            StatusCodes.HttpClientError.Conflict,
+            'auth',
+        );
+
+        }
         return userRepo.create({...userData, role: "student"});
     }
 
     createCoach(coachData: Omit<IUser, keyof IBaseMetadata | "role">) {
+        const isExist = this.getUserByEmail(coachData.email);
+
+        if(isExist) {
+
+            throw new CustomError(
+                'User already exist!',
+                StatusCodes.HttpClientError.Conflict,
+                'auth',
+            );
+        }
+        
         return userRepo.create({...coachData, role: "coach"});
     }
 

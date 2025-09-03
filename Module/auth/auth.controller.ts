@@ -1,55 +1,78 @@
-import { BodyObject, EHttpStatus } from "@/@types";
-import {Response, Request} from "express";
-import { TLoginDTO, TLoginResponseDTO, TSignUpDTO, TSignUpResponseDTO } from "./types/auth.dto";
+import { Response, Request } from "express";
+import { BodyObject, StatusCodes } from "@/@types";
+import {
+  TLoginDTO,
+  TLoginResponseDTO,
+  TSignUpDTO,
+  TSignUpResponseDTO,
+} from "./types/auth.dto";
 import { zodValidation } from "@/validation/utils/zodValidation";
 import { signInSchema, signUpSchema } from "@/validation/schemas/auth.schema";
 import authService from "./auth.service";
 import userService from "@/Module/user/user.service";
 import { createArgon2Hash } from "@/utils/hash.util";
 import { removeKey } from "@/utils/object.utils";
+import CustomError from "@/Error/customError";
 
 class AuthController {
-    async signIn(req: Request<BodyObject, BodyObject, TLoginDTO>, res: Response<TLoginResponseDTO | string>) {
-        const userCreds = req.body;
-        const validData = zodValidation(signInSchema, userCreds, "auth");
-        const loginData = await authService.signIn(validData);
+  async signIn(
+    req: Request<BodyObject, BodyObject, TLoginDTO>,
+    res: Response
+  ) {
+    const userCreds = req.body;
 
-        if(!loginData) {
-            res
-                .status(EHttpStatus.BadRequest)
-                .send("Invalid Credintials!");
-            return;
-        }
+    const validData = zodValidation(signInSchema, userCreds, "auth");
+    
+    const loginData: TLoginResponseDTO | null = await authService.signIn(validData);
+    
+    if (!loginData) {
 
-        res
-            .status(EHttpStatus.OK)
-            .json(loginData)
+        throw new CustomError(
+          'Invalid credentials!',
+          StatusCodes.HttpClientError.BadRequest,
+          'auth',
+        )
+      
     }
 
-    async signUp (req: Request<BodyObject, BodyObject, TSignUpDTO>, res: Response<TSignUpResponseDTO>) {
+    return res.success({
 
-        const userData = req.body;
+      success: true,
+      data: loginData,
+      statusCode: StatusCodes.HttpSuccess.OK,
+      message: "Signed in successfully",
 
-        const hashedPassword = await createArgon2Hash(userData.password);
+    });
+  }
 
-        const validData = zodValidation(
-            signUpSchema,
-            {
-                ...userData, 
-                password: hashedPassword
-            },
-             "auth"
-        );
+  async signUp(
+    req: Request<BodyObject, BodyObject, TSignUpDTO>,
+    res: Response
+  ) {
 
-        const registeredUser = userService.createUser(validData);
+      const userData = req.body;
 
-        const userForTrans = removeKey(registeredUser, ["password"]);
+      const validData = zodValidation(
+        signUpSchema,
+        { ...userData },
+        "auth"
+      );
 
-        res
-            .status(EHttpStatus.Created)
-            .json(userForTrans)
-        
-    }
+    const hashedPassword = await createArgon2Hash(userData.password);
+
+    const registeredUser = userService.createUser({...validData, password: hashedPassword});
+
+    const userForTrans: TSignUpResponseDTO = removeKey(registeredUser, ["password"]);
+
+    return res.success({
+
+      success: true,
+      data: userForTrans,
+      statusCode: StatusCodes.HttpSuccess.Created,
+      message: "Signed up successfully",
+      
+    });
+  }
 }
 
 export default new AuthController();

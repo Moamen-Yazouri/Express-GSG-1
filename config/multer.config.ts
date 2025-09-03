@@ -1,4 +1,4 @@
-import { EHttpStatus } from "@/@types";
+import { StatusCodes } from "@/@types";
 import CustomError from "@/Error/customError";
 import multer from "multer";
 import path from "node:path";
@@ -30,7 +30,7 @@ const fileUpload = multer({
         }
         else {
 
-            cb(new CustomError("File type not supported", EHttpStatus.BadRequest, "course"));
+            cb(new CustomError("File type not supported", StatusCodes.HttpClientError.BadRequest, "course"));
 
         }
 
