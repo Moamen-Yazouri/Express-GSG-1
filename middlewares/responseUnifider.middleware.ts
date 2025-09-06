@@ -1,21 +1,21 @@
 import { ApiFail, ApiSuccess } from "@/@types";
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, RequestHandler, Response } from "express";
 
-export const responseUnifider = (req: Request, res: Response<ApiSuccess | ApiFail>, next: NextFunction) => {
+export const responseUnifider: RequestHandler = (req: Request, res: Response<ApiSuccess | ApiFail>, next: NextFunction) => {
     
-    const success = <T>(resPayload: ApiSuccess<T>) => {
+    res.success = <T>(resPayload: ApiSuccess<T>) => {
         res
             .status(200)
             .json(resPayload);
     }
 
-    const created = <T>(resPayload: ApiSuccess<T>) => {
+    res.created = <T>(resPayload: ApiSuccess<T>) => {
         res
             .status(201)
             .json(resPayload);
     }
 
-    const error = (resPayload: ApiFail) => {
+    res.error = (resPayload: ApiFail) => {
         res
             .status(resPayload.statusCode)
             .json(resPayload);
