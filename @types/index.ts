@@ -104,9 +104,9 @@ declare global {
     }
 
     interface Response {
-      success: <T>(resPayload: ApiSuccess<T>) => this,
-      created: <T>(resPayload: ApiSuccess<T>) => this,
-      error: (resPayload: ApiFail) => this,
+      success: <T>(resPayload: ApiSuccess<T>) => void,
+      created: <T>(resPayload: ApiSuccess<T>) => void,
+      error: (resPayload: ApiFail) => void,
     }
   }
 }

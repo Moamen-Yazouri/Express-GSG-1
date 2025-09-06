@@ -89,7 +89,7 @@ class CourseController {
     req: Request<{ id: string }, BodyObject, UpdateCourseDTO>,
     res: Response
   ) {
-
+    
     const id = req.params.id;
 
     const courseData = req.body;

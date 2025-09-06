@@ -1,5 +1,5 @@
 import "dotenv/config";
-import express, { NextFunction } from "express";
+import express, { NextFunction, RequestHandler } from "express";
 import { userRouter } from "./Module/user/user.route";
 import {Request, Response} from "express";
 import { errorHandler } from "./Error/utils/errorHandler";
@@ -10,6 +10,8 @@ const port = process.env.PORT;
 const app = express();
 
 app.use(express.json());
+
+app.use(express.urlencoded());
 
 app.use(responseUnifider);
 
