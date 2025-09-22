@@ -74,7 +74,7 @@ class CourseController {
 
     const course = courseService.createCourse({ ...validData, image });
 
-    return res.success({
+    return res.created({
 
       success: true,
       data: course,

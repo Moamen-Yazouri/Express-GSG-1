@@ -2,7 +2,7 @@
   // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
     // File Layout
-    "rootDir": "./",
+    // "rootDir": "./src",
     "outDir": "./dist",
     "paths": {
       "@/*": ["./*"],
@@ -11,10 +11,10 @@
     // See also https://aka.ms/tsconfig/module
     "module": "nodenext",
     "target": "esnext",
+
     // For nodejs:
     "lib": ["esnext"],
     "types": ["node", "jest"],
-    // and npm install -D @types/node
 
     // Other Outputs
     "sourceMap": true,
@@ -28,8 +28,8 @@
     // Style Options
     // "noImplicitReturns": true,
     // "noImplicitOverride": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
+    // "noUnusedLocals": true,
+    // "noUnusedParameters": true,
     // "noFallthroughCasesInSwitch": true,
     // "noPropertyAccessFromIndexSignature": true,
 
@@ -40,6 +40,6 @@
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
-    "skipLibCheck": true,
+    "skipLibCheck": true
   }
 }
