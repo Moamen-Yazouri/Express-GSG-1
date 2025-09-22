@@ -7,7 +7,7 @@ import { authRouter } from "@/Module/auth/auth.route";
 import CourseRouter from "./Module/course/courses.route";
 import { responseUnifider } from "./middlewares/responseUnifider.middleware";
 const port = process.env.PORT;
-const app = express();
+export const app = express();
 
 app.use(express.json());
 
@@ -19,7 +19,7 @@ app.use("/api/v1/auth", authRouter);
 
 app.use("/api/v1/users", userRouter);
 
-app.use('/api/v1/course', CourseRouter);
+app.use('/api/v1/courses', CourseRouter);
 
 app.use((req: Request, res: Response) => {
     const path = req.path
@@ -30,5 +30,6 @@ app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
     console.log(err)
     errorHandler(err, res);
 });
-
-app.listen(port);
+if(process.env.NODE_ENV !== 'test') {
+    app.listen(port);
+};

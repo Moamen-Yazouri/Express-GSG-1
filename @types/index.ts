@@ -77,7 +77,9 @@ interface IEnv {
 
 declare global {
   namespace NodeJS {
-    interface ProcessEnv extends IEnv {}
+    interface ProcessEnv extends IEnv {
+      NODE_ENV: 'development' | 'production' | 'test',
+    }
   }
 }
 

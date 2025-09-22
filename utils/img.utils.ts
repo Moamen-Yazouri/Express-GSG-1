@@ -5,8 +5,9 @@ import { StatusCodes } from "@/@types";
 
 export const deleteImage = async (imageName: string) => {
     try {
-
+        
         const filePath = path.join(__dirname, '../', 'images', imageName);
+        console.log(filePath)
         await fs.unlink(filePath);
     }
     catch(err: unknown) {

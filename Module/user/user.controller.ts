@@ -83,9 +83,16 @@ class UserController {
   }
 
   async createCoach(req: Request<BodyObject, BodyObject, CreateCoachDTO>, res: Response) {
+    
     const coachData = req.body;
 
-    const validData = zodValidation(createSchema, req.body, "user");
+    const validData = zodValidation(
+      createSchema,
+      {
+        ...req.body, 
+        role: "coach"
+      }, "user"
+    );
     
     const hashedPass = await createArgon2Hash(coachData.password);
 
@@ -96,7 +103,7 @@ class UserController {
 
     const createdCoach = userService.createCoach(newUser);
 
-    return res.success({
+    return res.created({
       success: true,
       data: removeKey(createdCoach, ["password"]),
       statusCode: StatusCodes.HttpSuccess.Created, 
