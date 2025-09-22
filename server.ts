@@ -19,7 +19,7 @@ app.use("/api/v1/auth", authRouter);
 
 app.use("/api/v1/users", userRouter);
 
-app.use('/api/v1/course', CourseRouter);
+app.use('/api/v1/courses', CourseRouter);
 
 app.use((req: Request, res: Response) => {
     const path = req.path
